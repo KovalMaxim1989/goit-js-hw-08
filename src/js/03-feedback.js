@@ -26,15 +26,19 @@ function onSubmit(evt) {
     evt.preventDefault();
     if(email.value === "") {
         return alert('введіть пошту')
+  }
+   if(message.value === "") {
+        return alert('введіть повідомлення')
     }
     console.log(localStorage.getItem("feedback-form-state"));
    evt.currentTarget.reset();
    localStorage.removeItem("feedback-form-state");
 };
 function autoForm() {
-    const savedMessage =localStorage.getItem("feedback-form-state");
+  const savedMessage = localStorage.getItem("feedback-form-state");
+  const savedFormText = JSON.parse(savedMessage);
     if(savedMessage) {
-        message.value = JSON.parse(savedMessage).message;
-        email.value = JSON.parse(savedMessage).email;
+        message.value = savedFormText.message;
+        email.value = savedFormText.email;
     }
 }
