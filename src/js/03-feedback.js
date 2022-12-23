@@ -6,20 +6,17 @@ const message = document.querySelector('.feedback-form textarea');
 
 autoForm();
 
-form.addEventListener('input', throttle(onInput, 1000));
+form.addEventListener('input', throttle(onInput, 500));
 form.addEventListener('submit', onSubmit)
 
-const  feedbackFormState = {email : "", message : ""};
+// const  feedbackFormState = {email : "", message : ""};
 
 function onInput(evt) {
-  
-  if (evt.target === email) {
-    feedbackFormState.email = evt.target.value;
-  }
-  if (evt.target === message) {
-    feedbackFormState.message = evt.target.value;
-  }
-  localStorage.setItem("feedback-form-state", JSON.stringify(feedbackFormState))
+
+  let savedData = localStorage.getItem('feedback-form-state');
+  savedData = savedData ? JSON.parse(savedData) : {}; 
+  savedData[evt.target.name] = evt.target.value; 
+  localStorage.setItem('feedback-form-state', JSON.stringify(savedData)); 
 };
 
 function onSubmit(evt) {
@@ -30,15 +27,19 @@ function onSubmit(evt) {
    if(message.value === "") {
         return alert('введіть повідомлення')
     }
-    console.log(localStorage.getItem("feedback-form-state"));
+    const formData = new FormData(form);
+  formData.forEach((value, name) => console.log(name+":", value));
+
    evt.currentTarget.reset();
    localStorage.removeItem("feedback-form-state");
 };
 function autoForm() {
-  const savedMessage = localStorage.getItem("feedback-form-state");
-  const savedFormText = JSON.parse(savedMessage);
-    if(savedMessage) {
-        message.value = savedFormText.message;
-        email.value = savedFormText.email;
-    }
+
+   let savedData = localStorage.getItem('feedback-form-state');
+  if (savedData) {
+    savedData = JSON.parse(savedData);
+    Object.entries(savedData).forEach(([name, value]) => {
+      form.elements[name].value = value;
+    });
+  }
 }
